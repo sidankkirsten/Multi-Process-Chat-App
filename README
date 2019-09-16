@@ -1,0 +1,49 @@
+Multi-Process Chat App
+
+1. purpose
+	The purpose of this program is to implement a simple ”local” multi-party chat application using a multi-process architecture.Using IPC to coordinate and communicate among processes and using "polling" to keep asynchrony without threads.We also use multi processes to provide isolation among users and server.
+
+
+2. How to compile the program:
+	-Server Setup:
+		1. Open up terminal and access directory "Multi-Process-Chat-App" using "cd /.../Multi-Process-Chat_App", input "make clean", then "make".
+		2. Input "./server", server setup done.
+	-Client Setup:
+		1. Open a new terminal window. Access directory "Project_2".
+		2. Input "./client <username>" (put your user name at <username>)
+		3. If more client is needed, repeat step 1 and 2.
+
+3. How to use the program from the shell (syntax):
+	-Sever:
+		After setting up server, server can send four types of commands:
+		- \list : List user ids of all the current active users. "No users" means there is not active user.
+		- \kick <username>: Server can kick user by typing user_id to <username>
+		- \exit : Server session terminate, all the user sessions will be terminated/
+		- <any-other-text> : Any other texts input by server will be received by each user
+
+
+	-User/Client:
+		After setting up user, user can send four types of commands:
+		- \list :List user ids of all the current active users. "No users" means there is not active user.
+		- \p2p <username><message>: User can send messages to a particular user.
+		- \exit: User session terminate, server session will not be terminated.
+		- <any-other-text> : Any other text entered will be sent to all the active users.
+
+4. What exactly your program does:
+	This program is a simple ”local” multi-party chat application.It will have a central chat server, which handles all of the management of the chat, and waits for users to connect to the server, supporting both private peer-to-peer chatting and group chatting.
+	The chat group will contain all users that are connected to the server and only one such group will be supported at a time.
+
+5. Any explicit assumptions you have made:
+	- Server and clients run on a single machine locally.
+	- Clients never send empty message to server.( Client can send empty message to a particular user).
+	- Server and Clients will never do "Control + c" at the keyboard.
+
+6. Your strategies for error handling:
+	-Invalid username:
+		i. Invalid username/ user list full at client setting up:print error message to the client window, client session exit. An error message- "user x seems to be terminated" will display on the server's window.
+		ii. Invalid username at \p2p: "User was not given" will be printed one the sender's window.
+	-Invalid message:
+		i. Empty message at \p2p: "Message is not given" displays at sender's window. Message will not be sent.
+	-List: When there is no active user, "no user" will be printed on the server's window.
+	-Create pipe/read/write error:  Keep track the return value when calling pipe(), read() and write(). If the return value is not normal, using perror()to print error code from system/wrapper-library calls and using exit() to terminate.
+	-When Exiting the server, all the other user sessions, pipes are closed, clean up user list.
